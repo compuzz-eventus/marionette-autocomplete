@@ -9,6 +9,7 @@
     initialize: (models, @options) ->
       @setDataset @options.data
       @_startListening()
+      @loading = false
 
     ###*
      * Listen to relavent events
@@ -63,7 +64,7 @@
     getParams: (query) ->
       data = {}
 
-      data[@options.keys.query] = query 
+      data[@options.keys.query] = query
 
       _.each @options.keys, (value, key) ->
         data[value] ?= @options.values[key]
@@ -143,6 +144,9 @@
      * highlight next item.
     ###
     highlightNext: ->
+      if @options.lazyLoad and @is5thFromLast() and !@loading and !@allLoaded
+        @loadMore()
+
       unless @isLast()
 
         if @isStarted()
@@ -163,6 +167,9 @@
     ###
     isLast: ->
       @index + 1 is @length
+
+    is5thFromLast: ->
+      @index + 1 is @length - 5
 
     ###*
      * Check to see if we have navigated through the
@@ -195,22 +202,27 @@
     ###
     reset: ->
       @index = -1
+      @allLoaded = false
       super arguments...
 
     loadMore: ->
-      that = @ # can not use _.bind(this) because it is not the same context
-      url = that.options.remote
-      p = that.getParams(@currentQuery, @length)
-      params = $.param(p.data)
+      if !@loading and !@allLoaded
+        @loading = true
+        that = @ # can not use _.bind(this) because it is not the same context
+        url = that.options.remote
+        p = that.getParams(@currentQuery, @length)
+        params = $.param(p.data)
 
-      $.ajax
-        url: "#{url}&#{params}"
-        success: (resp) =>
-          that.parse(resp)
-          that.push(resp)
-          that.trigger('sync')
-          if resp.length != that.options.values.limit
-            that.trigger 'all:loaded'
+        $.ajax
+          url: "#{url}&#{params}"
+          success: (resp) =>
+            that.parse(resp)
+            that.push(resp)
+            that.trigger('sync')
+            @loading = false
+            if resp.length != that.options.values.limit
+              @allLoaded = true
+              that.trigger 'all:loaded'
 
     getParams: (query, first) ->
       @currentQuery = query

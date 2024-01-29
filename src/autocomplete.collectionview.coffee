@@ -27,17 +27,16 @@
 
     initialize: () ->
       @loading = false
-      @allLoaded = false
 
     events:
       'scroll': 'onScroll'
     collectionEvents:
-      'sync': 'addLoading',
+      'sync': 'endLoading',
       'request': 'startLoading',
       'all:loaded': 'onAllLoaded'
 
     onScroll: (event) ->
-      if !@allLoaded and !@loading
+      if !@loading
         lastFith = event.currentTarget.querySelector('li:nth-last-child(5)')
         boundingClientRect = lastFith.getBoundingClientRect()
         ulRect = event.currentTarget.getBoundingClientRect()
@@ -46,16 +45,14 @@
           @loading = true
 
     onAllLoaded: () ->
-      @allLoaded = true
       @collection.each _.bind(((model) ->
         if model.get(@options.collection.options.valueKey) == @options.collection.query
           @$el.parent().parent().find('.js-edit-record').attr 'title', if model.get('name') then model.get('name') else ''
           @$el.parent().attr 'title', if model.get('name') then model.get('name') else ''
       ), this)
 
-    addLoading: () ->
+    endLoading: () ->
       @loading = false
-      @allLoaded = false
 
     startLoading: () ->
       @loading = true
