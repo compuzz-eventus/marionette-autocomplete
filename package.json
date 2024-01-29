@@ -1,11 +1,11 @@
 {
   "name": "marionette-autocomplete",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "description": "Marionette autocomplete behavior",
   "main": "dist/autocomplete.js",
   "repository": {
     "type": "git",
-    "url": "git://github.com/KyleNeedham/autocomplete.git"
+    "url": "git://github.com/compuzz-eventus/marionette-autocomplete.git"
   },
   "keywords": [
     "autocomplete",
@@ -13,13 +13,14 @@
     "marionette"
   ],
   "authors": [
-    "Kyle Needham <kylex691@hotmail.com>"
+    "Kyle Needham <kylex691@hotmail.com>",
+    "Christopher Rombach <christopher.rombach@mobiolink.com>"
   ],
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/KyleNeedham/autocomplete/issues"
+    "url": "https://github.com/compuzz-eventus/marionette-autocomplete/issues"
   },
-  "homepage": "https://github.com/KyleNeedham/autocomplete",
+  "homepage": "https://github.com/compuzz-eventus/marionette-autocomplete",
   "devDependencies": {
     "grunt": "latest",
     "grunt-cli": "latest",

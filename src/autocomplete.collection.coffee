@@ -19,6 +19,8 @@
       @listenTo @, 'highlight:next', @highlightNext
       @listenTo @, 'highlight:previous', @highlightPrevious
       @listenTo @, 'clear', @reset
+      @listenTo @, 'load:more', @loadMore
+
 
     ###*
      * Save models passed into the constructor seperately to avoid
@@ -194,3 +196,28 @@
     reset: ->
       @index = -1
       super arguments...
+
+    loadMore: ->
+      that = @ # can not use _.bind(this) because it is not the same context
+      url = that.options.remote
+      p = that.getParams(@currentQuery, @length)
+      params = $.param(p.data)
+
+      $.ajax
+        url: "#{url}&#{params}"
+        success: (resp) =>
+          that.parse(resp)
+          that.push(resp)
+          that.trigger('sync')
+          that.trigger('all:loaded') unless resp.length is limit
+
+    getParams: (query, first) ->
+      @currentQuery = query
+      data = {}
+      that = @ # can not use _.bind(this) because it is not the same context
+      data[that.options.keys.query] = query
+      _.each that.options.keys, (value, key) ->
+        data[value] = data[value] or that.options.values[key]
+        data[value]
+      data.first = if first then first else '0'
+      {data}

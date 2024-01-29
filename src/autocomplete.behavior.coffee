@@ -175,7 +175,8 @@
      * Toggle the autocomplete dropdown.
     ###
     toggleDropdown: =>
-      @ui.autocomplete.dropdown 'toggle'
+      if !@view and !@view.isDestroyed
+        @ui.autocomplete.dropdown 'toggle'
 
     ###*
      * @param {string} query
