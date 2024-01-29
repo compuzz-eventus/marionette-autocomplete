@@ -209,7 +209,8 @@
           that.parse(resp)
           that.push(resp)
           that.trigger('sync')
-          that.trigger('all:loaded') unless resp.length is limit
+          if resp.length != that.options.values.limit
+            that.trigger 'all:loaded'
 
     getParams: (query, first) ->
       @currentQuery = query
