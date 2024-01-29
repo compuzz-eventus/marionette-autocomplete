@@ -21,7 +21,7 @@
             limit: 'limit'
           values:
             query: null
-            limit: 10
+            limit: 20
 
       collectionView:
         class: AutoComplete.CollectionView
