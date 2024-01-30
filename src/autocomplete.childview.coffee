@@ -1,5 +1,5 @@
 
-  class AutoComplete.ChildView extends Marionette.ItemView
+  class AutoComplete.ChildView extends Marionette.View
 
     ###*
      * @type {String}
