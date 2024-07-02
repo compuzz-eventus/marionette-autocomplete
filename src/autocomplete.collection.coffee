@@ -70,6 +70,10 @@
         data[value] ?= @options.values[key]
       , @
 
+      if @options.method == 'POST'
+        data.method = 'POST'
+        data.contentType = 'application/x-www-form-urlencoded'
+
       { data }
 
     ###*
@@ -80,7 +84,11 @@
     fetchNewSuggestions: (query) ->
       switch @options.type
         when 'remote'
-          @fetch _.extend url: @options.remote, reset: yes, @getParams query
+          method = @options.method || 'GET'
+          contentType = 'application/json'
+          if method == 'POST'
+            contentType = 'application/x-www-form-urlencoded'
+          @fetch _.extend url: @options.remote, reset: yes, type: method, contentType: contentType, @getParams query
         when 'dataset'
           @filterDataSet query
         else
@@ -213,16 +221,32 @@
         p = that.getParams(@currentQuery, @length)
         params = $.param(p.data)
 
-        $.ajax
-          url: "#{url}&#{params}"
-          success: (resp) =>
-            that.parse(resp)
-            that.push(resp)
-            that.trigger('sync')
-            @loading = false
-            if resp.length != that.options.values.limit
-              @allLoaded = true
-              that.trigger 'all:loaded'
+        # if that.options.method equals 'POST'
+        if that.options.method == 'POST'
+          $.ajax
+            url: url
+            type: 'POST'
+            data: params
+            contentType: 'application/x-www-form-urlencoded'
+            success: (resp) =>
+              that.parse(resp)
+              that.push(resp)
+              that.trigger('sync')
+              @loading = false
+              if resp.length != that.options.values.limit
+                @allLoaded = true
+                that.trigger 'all:loaded'
+        else
+          $.ajax
+            url: "#{url}&#{params}"
+            success: (resp) =>
+              that.parse(resp)
+              that.push(resp)
+              that.trigger('sync')
+              @loading = false
+              if resp.length != that.options.values.limit
+                @allLoaded = true
+                that.trigger 'all:loaded'
 
     getParams: (query, first) ->
       @currentQuery = query
