@@ -70,10 +70,6 @@
         data[value] ?= @options.values[key]
       , @
 
-      if @options.method == 'POST'
-        data.method = 'POST'
-        data.contentType = 'application/x-www-form-urlencoded'
-
       { data }
 
     ###*
