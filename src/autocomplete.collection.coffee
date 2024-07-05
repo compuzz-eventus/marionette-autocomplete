@@ -207,6 +207,9 @@
     reset: ->
       @index = -1
       @allLoaded = false
+      # check if the first arguments is less length that limit
+      if @length < @options.values.limit
+        @allLoaded = true
       super arguments...
 
     loadMore: ->
