@@ -227,6 +227,8 @@
     focusOutInput: ->
       setTimeout =>
         return if @view.isDestroyed()
+
+        return if @visible is no
         
         inputValue = @ui.autocomplete.val().toLowerCase()
         suggestion = @suggestions.find (model) ->
