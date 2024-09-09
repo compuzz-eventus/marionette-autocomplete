@@ -228,7 +228,9 @@
         return if @view.isDestroyed()
         
         inputValue = @ui.autocomplete.val().toLowerCase()
-        suggestion = @suggestions.find (model) -> model.get('value').toLowerCase() is inputValue
+        suggestion = @suggestions.find (model) ->
+          value = model.get('value')
+          value?.toLowerCase() is inputValue
     
         if suggestion
           @completeQuery(suggestion)
