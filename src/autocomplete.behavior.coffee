@@ -54,7 +54,8 @@
       'keyup @ui.autocomplete': 'onKeyUp'
       'click @ui.autocomplete': '_stopPropagationWhenVisible'
       'shown.bs.dropdown': 'setDropdownShown'
-      'hidden.bs.dropdown': 'setDropdownHidden'
+      'hidden.bs.dropdown': 'setDropdownHidden',
+      'focusout @ui.autocomplete': 'focusOutInput'
 
     ###*
      * Setup the AutoComplete options and suggestions collection.
@@ -175,9 +176,9 @@
      * Toggle the autocomplete dropdown.
     ###
     toggleDropdown: =>
-      if !@view and !@view.isDestroyed
+      if @view and not @view.isDestroyed()
         @ui.autocomplete.dropdown 'toggle'
-
+    
     ###*
      * @param {string} query
     ###
@@ -218,7 +219,25 @@
       @fillQuery suggestion
       @view.trigger "#{@eventPrefix}:selected", suggestion
       @toggleDropdown()
-
+      
+    ###*
+      * Focus out input event.
+    ###
+    focusOutInput: ->
+      setTimeout =>
+        return if @view.isDestroyed()
+        
+        inputValue = @ui.autocomplete.val().toLowerCase()
+        suggestion = @suggestions.find (model) -> model.get('value').toLowerCase() is inputValue
+    
+        if suggestion
+          @completeQuery(suggestion)
+        else
+          @ui.autocomplete.val('')
+          @view.trigger "#{@eventPrefix}:selected", null
+          @toggleDropdown()
+      , 200
+    
     ###*
      * Clean up `AutoComplete.CollectionView`.
     ###
