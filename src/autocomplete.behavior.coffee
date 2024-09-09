@@ -219,7 +219,7 @@
     completeQuery: (suggestion) ->
       @fillQuery suggestion
       @view.trigger "#{@eventPrefix}:selected", suggestion
-      @visible = no      
+      @toggleDropdown()
       
     ###*
       * Focus out input event.
