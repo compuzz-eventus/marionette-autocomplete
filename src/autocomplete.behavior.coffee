@@ -163,6 +163,7 @@
     setDropdownShown: ->
       @visible = yes
       @view.trigger "#{@eventPrefix}:shown"
+      @updateQuery @ui.autocomplete.val()
 
     ###*
      * Set visible to fsldr and trigger an event on the view
