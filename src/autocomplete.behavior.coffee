@@ -41,8 +41,6 @@
     ###
     actionKeysMap:
       27: 'esc'
-      37: 'left'
-      39: 'right'
       13: 'enter'
       38: 'up'
       40: 'down'
@@ -51,6 +49,7 @@
      * @type {Object}
     ###
     events:
+      'keydown @ui.autocomplete': 'onKeyDown'
       'keyup @ui.autocomplete': 'onKeyUp'
       'click @ui.autocomplete': '_stopPropagationWhenVisible'
       'shown.bs.dropdown': 'setDropdownShown'
@@ -69,7 +68,7 @@
       @_startListening()
 
     ###*
-     * Listen to relavent events
+     * Listen to relevant events
     ###
     _startListening: ->
       @listenTo @suggestions, 'selected', @completeQuery
@@ -118,28 +117,42 @@
           'data-toggle': 'dropdown'
 
     ###*
-     * Handle keyup event.
+     * Handle keydown event.
+     * @param {jQuery.Event} $e
+    ###
+    onKeyDown: ($e) ->
+      key = $e.which or $e.keyCode
+  
+      unless @ui.autocomplete.val().length < @options.minLength
+        if @actionKeysMap[key]?
+          $e.preventDefault()
+          $e.stopPropagation()
+          @doAction(key, $e)
+        else if key isnt 9 and key isnt 16 # Ignore tab key or shift tab
+          clearTimeout(@searchTimeout)  # Clear any existing timeout
+          setTimeout =>
+            @updateQuery @ui.autocomplete.val()
+          , 100  # Delay of 100 milliseconds
+
+    ###*
+     * Handle keydown event.
      * @param {jQuery.Event} $e
     ###
     onKeyUp: ($e) ->
-      $e.preventDefault()
-      $e.stopPropagation()
-
       key = $e.which or $e.keyCode
-
+  
       unless @ui.autocomplete.val().length < @options.minLength
-        if @actionKeysMap[key]? then @doAction(key, $e) else @updateQuery @ui.autocomplete.val()
-
+        if @actionKeysMap[key]?
+          $e.preventDefault()
+          $e.stopPropagation()
+  
     ###*
      * Trigger action event based on keycode name.
      * @param {Number} keycode
-     * @param {jQuery.Event} $e
     ###
-    doAction: (keycode, $e) ->
+    doAction: (keycode) ->
       unless @suggestions.isEmpty()
         switch @actionKeysMap[keycode]
-          when 'right'
-            @suggestions.trigger 'select' if @isSelectionEnd $e
           when 'enter'
             @suggestions.trigger 'select'
           when 'down'
@@ -166,7 +179,7 @@
       @updateQuery @ui.autocomplete.val()
 
     ###*
-     * Set visible to fsldr and trigger an event on the view
+     * Set visible to false and trigger an event on the view
      * so specific actions can be taken when the dropdown is closed.
     ###
     setDropdownHidden: ->
@@ -179,7 +192,16 @@
     toggleDropdown: =>
       if @view and not @view.isDestroyed()
         @ui.autocomplete.dropdown 'toggle'
-    
+        @visible = @ui.autocomplete.parent().hasClass('open')
+
+    ###*
+     * Toggle the autocomplete dropdown.
+    ###
+    closeDropdown: =>
+      if @view and not @view.isDestroyed()
+        @ui.autocomplete.parent().removeClass('open')
+        @visible = no
+      
     ###*
      * @param {string} query
     ###
@@ -197,14 +219,6 @@
       @suggestions.trigger 'find', query
 
     ###*
-     * Check to see if the cursor is at the end of the query string.
-     * @param {jQuery.Event} $e
-     * @return {Boolean}
-    ###
-    isSelectionEnd: ($e) ->
-      $e.target.value.length is $e.target.selectionEnd
-
-    ###*
      * Complete the query using the highlighted suggestion.
      * @param  {Backbone.Model} suggestion
     ###
@@ -213,36 +227,44 @@
       @view.trigger "#{@eventPrefix}:active", suggestion
 
     ###*
-     * Complete the query uisng the selected suggestion.
+     * Complete the query using the selected suggestion.
      * @param  {Backbone.Model} suggestion
     ###
     completeQuery: (suggestion) ->
       @fillQuery suggestion
       @view.trigger "#{@eventPrefix}:selected", suggestion
       @toggleDropdown()
-      
-    ###*
-      * Focus out input event.
-    ###
-    focusOutInput: ->
-      setTimeout =>
-        return if @view.isDestroyed()
 
-        return if @visible is no
+    ###*
+     * FocusOut input event.
+    ###
+    focusOutInput: ->  
+        @listenToOnce @suggestions, 'sync', =>
+          @executeFocusOutInput()
+  
+        @updateQuery @ui.autocomplete.val()
         
-        inputValue = @ui.autocomplete.val().toLowerCase()
-        suggestion = @suggestions.find (model) ->
-          value = model.get('value')
-          value?.toLowerCase() is inputValue
-    
-        if suggestion
-          @completeQuery(suggestion)
-        else
-          @ui.autocomplete.val('')
-          @view.trigger "#{@eventPrefix}:selected", null
-          @toggleDropdown()
-      , 200
-    
+    ###*
+      * Execute the focusOut input logic.
+    ###
+    executeFocusOutInput: ->
+      return if @view.isDestroyed()
+
+      inputValue = @ui.autocomplete.val()?.toLowerCase()
+      
+      suggestion = @suggestions.find (model) ->
+        value = model.get('value')
+        value?.toLowerCase() is inputValue
+  
+      if suggestion
+        this.fillQuery(suggestion)
+        this.view.trigger(this.eventPrefix + ":selected", suggestion)
+      else
+        @ui.autocomplete.val('')
+        @view.trigger "#{@eventPrefix}:selected", null
+        
+      @closeDropdown()
+  
     ###*
      * Clean up `AutoComplete.CollectionView`.
     ###

@@ -134,7 +134,9 @@
      * has been navigated then select at the current index.
     ###
     select: ->
-      @trigger 'selected', @at if @isStarted() then @index else 0
+      return if @isStarted()
+      
+      @trigger 'selected', @at @index
 
     ###*
      * highlight previous item.
