@@ -1,6 +1,6 @@
 {
   "name": "marionette-autocomplete",
-  "version": "0.4.7",
+  "version": "0.4.8",
   "description": "Marionette autocomplete behavior",
   "main": "dist/autocomplete.js",
   "repository": {
