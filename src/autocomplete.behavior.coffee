@@ -122,6 +122,7 @@
     ###
     onKeyDown: ($e) ->
       key = $e.which or $e.keyCode
+      @lastKey = key
   
       unless @ui.autocomplete.val().length < @options.minLength
         if @actionKeysMap[key]?
@@ -238,7 +239,8 @@
     ###*
      * FocusOut input event.
     ###
-    focusOutInput: ->  
+    focusOutInput: ->
+      if @lastKey is 9 or @lastKey is 16
         @listenToOnce @suggestions, 'sync', =>
           @executeFocusOutInput()
   
