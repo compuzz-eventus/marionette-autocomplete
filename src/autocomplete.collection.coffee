@@ -78,6 +78,7 @@
      * @param {String} query
     ###
     fetchNewSuggestions: (query) ->
+      @trigger 'open'
       switch @options.type
         when 'remote'
           method = @options.method || 'GET'

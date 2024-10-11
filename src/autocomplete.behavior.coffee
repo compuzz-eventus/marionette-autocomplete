@@ -73,6 +73,7 @@
     _startListening: ->
       @listenTo @suggestions, 'selected', @completeQuery
       @listenTo @suggestions, 'highlight', @fillQuery
+      @listenTo @suggestions, 'open', @openDropdown
       @listenTo @view, "#{@eventPrefix}:find", @findRelatedSuggestions
 
     ###*
@@ -122,7 +123,6 @@
     ###
     onKeyDown: ($e) ->
       key = $e.which or $e.keyCode
-      @lastKey = key
   
       unless @ui.autocomplete.val().length < @options.minLength
         if @actionKeysMap[key]?
@@ -198,6 +198,14 @@
     ###*
      * Toggle the autocomplete dropdown.
     ###
+    openDropdown: =>
+      if @view and not @view.isDestroyed()
+        @ui.autocomplete.parent().addClass('open')
+        @visible = yes
+        
+    ###*
+     * Toggle the autocomplete dropdown.
+    ###
     closeDropdown: =>
       if @view and not @view.isDestroyed()
         @ui.autocomplete.parent().removeClass('open')
@@ -232,20 +240,21 @@
      * @param  {Backbone.Model} suggestion
     ###
     completeQuery: (suggestion) ->
+      @isDropdownClicked = yes
       @fillQuery suggestion
       @view.trigger "#{@eventPrefix}:selected", suggestion
       @toggleDropdown()
 
     ###*
-     * FocusOut input event.
+    * FocusOut input event.
     ###
     focusOutInput: ->
-      if @lastKey is 9 or @lastKey is 16
-        @listenToOnce @suggestions, 'sync', =>
+      @isDropdownClicked = no
+      setTimeout(() =>
+        if not @isDropdownClicked
           @executeFocusOutInput()
-  
-        @updateQuery @ui.autocomplete.val()
-        
+      , 150)
+    
     ###*
       * Execute the focusOut input logic.
     ###
