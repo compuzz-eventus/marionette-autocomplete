@@ -133,7 +133,7 @@
           clearTimeout(@searchTimeout)  # Clear any existing timeout
           setTimeout =>
             @updateQuery @ui.autocomplete.val()
-          , 100  # Delay of 100 milliseconds
+          , 300
 
     ###*
      * Handle keydown event.
