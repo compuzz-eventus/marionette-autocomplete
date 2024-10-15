@@ -233,8 +233,8 @@
             success: (resp) =>
               that.parse(resp)
               that.push(resp)
-              that.trigger('sync')
               @loading = false
+              that.trigger('sync')
               if resp.length != that.options.values.limit
                 @allLoaded = true
                 that.trigger 'all:loaded'
@@ -244,8 +244,8 @@
             success: (resp) =>
               that.parse(resp)
               that.push(resp)
-              that.trigger('sync')
               @loading = false
+              that.trigger('sync')
               if resp.length != that.options.values.limit
                 @allLoaded = true
                 that.trigger 'all:loaded'

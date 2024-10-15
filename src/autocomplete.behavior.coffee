@@ -253,7 +253,7 @@
       setTimeout(() =>
         if not @isDropdownClicked
           @executeFocusOutInput()
-      , 150)
+      , 300)
     
     ###*
       * Execute the focusOut input logic.
