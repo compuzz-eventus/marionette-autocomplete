@@ -207,11 +207,15 @@
     ###*
      * Reset suggestions
     ###
-    reset: ->
+    reset: (models)->
       @index = -1
       @allLoaded = false
+      
+      # count models without element with property "autocompleteAdd"
+      length = _.filter(models, (model) -> !model.autocompleteAdd).length
+      
       # check if the first arguments is less length that limit
-      if @length < @options.values.limit
+      if length < @options.values.limit
         @allLoaded = true
       super arguments...
 
