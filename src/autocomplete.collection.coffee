@@ -210,6 +210,8 @@
     reset: (models)->
       @index = -1
       @allLoaded = false
+      if(models.rows)
+        models = models.rows
       
       # count models without element with property "autocompleteAdd"
       length = _.filter(models, (model) -> !model.autocompleteAdd).length
@@ -235,6 +237,9 @@
             data: params
             contentType: 'application/x-www-form-urlencoded'
             success: (resp) =>
+              if(resp.rows)
+                resp = resp.rows
+                
               that.parse(resp)
               that.push(resp)
               @loading = false
@@ -246,6 +251,9 @@
           $.ajax
             url: "#{url}&#{params}"
             success: (resp) =>
+              if(resp.rows)
+                resp = resp.rows
+                
               that.parse(resp)
               that.push(resp)
               @loading = false
