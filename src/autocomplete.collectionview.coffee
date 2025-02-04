@@ -4,7 +4,12 @@
     ###*
      * @type {String}
     ###
-    tagName: 'ul'
+    tagName: 'div'
+
+    ###*
+     * @type {String}
+    ###
+    childViewContainer: 'ul'
 
     ###*
      * @type {String}
@@ -17,19 +22,19 @@
     attributes:
       style: 'width: 100%;'
 
+    template: _.template "<ul></ul>"
+    
     ###*
      * @return {Marionette.View}
     ###
     emptyView:
       Marionette.View.extend
         tagName: 'li',
-        template: _.template "<a>No suggestions available</a>"
+        template: _.template "<span>No suggestions available</span>"
 
     initialize: () ->
       @loading = false
 
-    events:
-      'scroll': 'onScroll'
     collectionEvents:
       'sync': 'endLoading',
       'request': 'startLoading',
@@ -43,6 +48,10 @@
         if boundingClientRect.top >= ulRect.top and boundingClientRect.bottom <= ulRect.bottom
           @collection.trigger 'load:more'
           @loading = true
+
+    onRender: ->
+      @$el.find('ul').on 'scroll', (e) =>
+        @onScroll(e)
 
     onAllLoaded: () ->
       @collection.each _.bind(((model) ->

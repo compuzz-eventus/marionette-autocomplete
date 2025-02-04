@@ -79,6 +79,7 @@
     ###
     fetchNewSuggestions: (query) ->
       @trigger 'open'
+      @reset([])
       switch @options.type
         when 'remote'
           method = @options.method || 'GET'
@@ -236,29 +237,23 @@
             type: 'POST'
             data: params
             contentType: 'application/x-www-form-urlencoded'
-            success: (resp) =>
-              if(resp.rows)
-                resp = resp.rows
-                
-              that.parse(resp)
-              that.push(resp)
+            success: (resp) =>                
+              that.parse(resp.rows)
+              that.push(resp.rows)
               @loading = false
               that.trigger('sync')
-              if resp.length != that.options.values.limit
+              if that.length == resp.records
                 @allLoaded = true
                 that.trigger 'all:loaded'
         else
           $.ajax
             url: "#{url}&#{params}"
-            success: (resp) =>
-              if(resp.rows)
-                resp = resp.rows
-                
-              that.parse(resp)
-              that.push(resp)
+            success: (resp) =>                
+              that.parse(resp.rows)
+              that.push(resp.rows)
               @loading = false
               that.trigger('sync')
-              if resp.length != that.options.values.limit
+              if that.length == resp.records
                 @allLoaded = true
                 that.trigger 'all:loaded'
 
@@ -270,5 +265,5 @@
       _.each that.options.keys, (value, key) ->
         data[value] = data[value] or that.options.values[key]
         data[value]
-      data.first = if first then first else '0'
+      data.first = that.length
       {data}
