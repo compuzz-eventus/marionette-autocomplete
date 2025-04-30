@@ -263,7 +263,7 @@
 
       inputValue = @ui.autocomplete.val()?.toLowerCase()
       
-      if @view.model and @view.model.get(@options.collection.options.valueKey)?.toLowerCase() == inputValue
+      if @view.model and ((@view.model instanceof Backbone.Model && @view.model.get(@options.collection.options.valueKey)?.toLowerCase() == inputValue) || @view.model.toLowerCase() == inputValue)
         @closeDropdown()
         return
       
