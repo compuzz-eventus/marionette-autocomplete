@@ -1,6 +1,6 @@
 {
   "name": "marionette-autocomplete",
-  "version": "0.5.4",
+  "version": "0.5.5",
   "description": "Marionette autocomplete behavior",
   "main": "dist/autocomplete.cjs",
   "module": "dist/autocomplete.esm.js",
