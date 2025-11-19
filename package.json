@@ -2,7 +2,14 @@
   "name": "marionette-autocomplete",
   "version": "0.5.4",
   "description": "Marionette autocomplete behavior",
-  "main": "dist/autocomplete.js",
+  "main": "dist/autocomplete.cjs",
+  "module": "dist/autocomplete.esm.js",
+  "exports": {
+    ".": {
+      "import": "./dist/autocomplete.esm.js",
+      "require": "./dist/autocomplete.cjs"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "git://github.com/compuzz-eventus/marionette-autocomplete.git"
@@ -21,12 +28,13 @@
     "url": "https://github.com/compuzz-eventus/marionette-autocomplete/issues"
   },
   "homepage": "https://github.com/compuzz-eventus/marionette-autocomplete",
+  "scripts": {
+    "build": "rollup -c"
+  },
   "devDependencies": {
-    "grunt": "latest",
-    "grunt-cli": "^1.4.3",
-    "grunt-contrib-coffee": "latest",
-    "grunt-contrib-uglify": "latest",
-    "grunt-contrib-watch": "latest"
+    "@rollup/plugin-commonjs": "^25.0.0",
+    "@rollup/plugin-node-resolve": "^15.0.0",
+    "rollup": "^4.0.0"
   },
   "dependencies": {
     "backbone.marionette": ">=4.0.0"
