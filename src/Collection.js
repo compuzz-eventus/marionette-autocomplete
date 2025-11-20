@@ -39,7 +39,7 @@ export class Collection extends Backbone.Collection {
     return _.reduce(prop.split('.'), (segment, property) => segment && segment[property], obj);
   }
 
-  fetchNewSuggestions = (query) => {
+  fetchNewSuggestions(query) {
     this.trigger('open');
     this.reset([]);
     switch (this.options.type) {
@@ -59,7 +59,7 @@ export class Collection extends Backbone.Collection {
       default:
         throw new Error('Unkown type passed');
     }
-  };
+  }
 
   filterDataSet(query) {
     const matches = [];
@@ -81,19 +81,19 @@ export class Collection extends Backbone.Collection {
     return String(string).toLowerCase().replace(/^\s*/g, '').replace(/\s{2,}/g, ' ');
   }
 
-  select = () => {
+  select() {
     if (this.isStarted()) return;
     this.trigger('selected', this.at(this.index));
-  };
+  }
 
-  highlightPrevious = () => {
+  highlightPrevious() {
     if (!(this.isFirst() || !this.isStarted())) {
       this.removeHighlight(this.index);
       this.highlight(this.index = this.index - 1);
     }
-  };
+  }
 
-  highlightNext = () => {
+  highlightNext() {
     if (this.options.lazyLoad && this.is5thFromLast() && !this.loading && !this.allLoaded) {
       this.loadMore();
     }
@@ -101,7 +101,7 @@ export class Collection extends Backbone.Collection {
       if (this.isStarted()) this.removeHighlight(this.index);
       this.highlight(this.index = this.index + 1);
     }
-  };
+  }
 
   isFirst() { return this.index === 0; }
   isLast() { return this.index + 1 === this.length; }
@@ -129,7 +129,7 @@ export class Collection extends Backbone.Collection {
     return super.reset(models, options);
   }
 
-  loadMore = () => {
+  loadMore() {
     if (this.loading || this.allLoaded) return;
     this.loading = true;
     const url = this.options.remote;
@@ -167,7 +167,7 @@ export class Collection extends Backbone.Collection {
         }
       });
     }
-  };
+  }
 
   getParams(query) {
     this.currentQuery = query;

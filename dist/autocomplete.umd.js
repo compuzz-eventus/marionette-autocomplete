@@ -41,7 +41,7 @@
       return _.reduce(prop.split('.'), (segment, property) => segment && segment[property], obj);
     }
 
-    fetchNewSuggestions = (query) => {
+    fetchNewSuggestions(query) {
       this.trigger('open');
       this.reset([]);
       switch (this.options.type) {
@@ -61,7 +61,7 @@
         default:
           throw new Error('Unkown type passed');
       }
-    };
+    }
 
     filterDataSet(query) {
       const matches = [];
@@ -83,19 +83,19 @@
       return String(string).toLowerCase().replace(/^\s*/g, '').replace(/\s{2,}/g, ' ');
     }
 
-    select = () => {
+    select() {
       if (this.isStarted()) return;
       this.trigger('selected', this.at(this.index));
-    };
+    }
 
-    highlightPrevious = () => {
+    highlightPrevious() {
       if (!(this.isFirst() || !this.isStarted())) {
         this.removeHighlight(this.index);
         this.highlight(this.index = this.index - 1);
       }
-    };
+    }
 
-    highlightNext = () => {
+    highlightNext() {
       if (this.options.lazyLoad && this.is5thFromLast() && !this.loading && !this.allLoaded) {
         this.loadMore();
       }
@@ -103,7 +103,7 @@
         if (this.isStarted()) this.removeHighlight(this.index);
         this.highlight(this.index = this.index + 1);
       }
-    };
+    }
 
     isFirst() { return this.index === 0; }
     isLast() { return this.index + 1 === this.length; }
@@ -131,7 +131,7 @@
       return super.reset(models, options);
     }
 
-    loadMore = () => {
+    loadMore() {
       if (this.loading || this.allLoaded) return;
       this.loading = true;
       const url = this.options.remote;
@@ -169,7 +169,7 @@
           }
         });
       }
-    };
+    }
 
     getParams(query) {
       this.currentQuery = query;
@@ -400,59 +400,59 @@
       this.view.trigger(`${this.eventPrefix}:hidden`);
     }
 
-    toggleDropdown = () => {
+    toggleDropdown() {
       if (this.view && !this.view.isDestroyed()) {
         this.ui.autocomplete.dropdown('toggle');
         this.visible = this.ui.autocomplete.parent().hasClass('open');
       }
-    };
+    }
 
-    openDropdown = () => {
+    openDropdown() {
       if (this.view && !this.view.isDestroyed()) {
         this.ui.autocomplete.parent().addClass('open');
         this.visible = true;
       }
-    };
+    }
 
-    closeDropdown = () => {
+    closeDropdown() {
       if (this.view && !this.view.isDestroyed()) {
         this.ui.autocomplete.parent().removeClass('open');
         this.visible = false;
       }
-    };
+    }
 
-    findRelatedSuggestions = (query) => {
+    findRelatedSuggestions(query) {
       this.ui.autocomplete.val(query);
       this.updateQuery(query);
       this.toggleDropdown();
-    };
+    }
 
-    _updateQuery = (query) => {
+    _updateQuery(query) {
       this.suggestions.trigger('find', query);
-    };
+    }
 
-    fillQuery = (suggestion) => {
+    fillQuery(suggestion) {
       this.ui.autocomplete.val(suggestion.get('value'));
       this.view.trigger(`${this.eventPrefix}:active`, suggestion);
-    };
+    }
 
-    completeQuery = (suggestion) => {
+    completeQuery(suggestion) {
       this.isDropdownClicked = true;
       this.fillQuery(suggestion);
       this.view.trigger(`${this.eventPrefix}:selected`, suggestion);
       this.toggleDropdown();
-    };
+    }
 
-    focusOutInput = () => {
+    focusOutInput() {
       this.isDropdownClicked = false;
       setTimeout(() => {
         if (!this.isDropdownClicked) {
           this.executeFocusOutInput();
         }
       }, 300);
-    };
+    }
 
-    executeFocusOutInput = () => {
+    executeFocusOutInput() {
       if (this.view.isDestroyed()) return;
       const inputValue = this.ui.autocomplete.val()?.toLowerCase();
       let doClose = false;
@@ -479,7 +479,7 @@
         this.view.trigger(`${this.eventPrefix}:selected`, null);
       }
       this.closeDropdown();
-    };
+    }
 
     onDestroy() {
       this.collectionView.destroy();
